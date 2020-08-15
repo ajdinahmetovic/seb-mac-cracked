@@ -150,10 +150,12 @@ void run_block_on_ui_thread(dispatch_block_t block)
     NSUInteger diskCapacity = 20*1024*1024;
     NSUInteger memoryCapacity = 512*1024;
     
+    #if !TARGET_OS_MACCATALYST
     SEBFilteredURLCache *cache = [[SEBFilteredURLCache alloc] initWithMemoryCapacity:memoryCapacity
                                                                         diskCapacity:diskCapacity
                                                                             diskPath:path];
     [NSURLCache setSharedURLCache:cache];
+    #endif
 
     // Empties all cookies, caches and credential stores, removes disk files, flushes in-progress
     // downloads to disk, and ensures that future requests occur on a new socket

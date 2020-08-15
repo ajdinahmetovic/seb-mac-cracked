@@ -405,28 +405,37 @@
 {
     SecKeyRef publicKey = NULL;
     
-    if (@available(iOS 10.0, *)) {
-        publicKey = SecCertificateCopyPublicKey(certificateRef);
+    if (@available(iOS 12.0, *)) {
+        publicKey = SecCertificateCopyKey(certificateRef);
         if (publicKey == NULL) {
             DDLogError(@"No proper public key found in certificate.");
             return NULL;
         }
     } else {
-        // SecCertificateCopyPublicKey() isn't available in iOS 9
-        SecPolicyRef policy = SecPolicyCreateBasicX509();
-        SecTrustRef trust = NULL;
-        OSStatus status = SecTrustCreateWithCertificates(certificateRef, policy, &trust);
-        CFRelease(policy);
-        if (errSecSuccess != status) {
-            DDLogError(@"SecTrustCreateWithCertificates status:%d",(int)status);
+        #if !TARGET_OS_MACCATALYST
+        if (@available(iOS 10.0, *)) {
+            publicKey = SecCertificateCopyPublicKey(certificateRef);
+            if (publicKey == NULL) {
+                DDLogError(@"No proper public key found in certificate.");
+                return NULL;
+            }
+        } else {
+            // SecCertificateCopyPublicKey() isn't available in iOS 9
+            SecPolicyRef policy = SecPolicyCreateBasicX509();
+            SecTrustRef trust = NULL;
+            OSStatus status = SecTrustCreateWithCertificates(certificateRef, policy, &trust);
+            CFRelease(policy);
+            if (errSecSuccess != status) {
+                DDLogError(@"SecTrustCreateWithCertificates status:%d",(int)status);
+            }
+            
+            if (trust) {
+                publicKey = SecTrustCopyPublicKey(trust);
+                CFRelease(trust);
+            }
         }
-        
-        if (trust) {
-            publicKey = SecTrustCopyPublicKey(trust);
-            CFRelease(trust);
-        }
+        #endif
     }
-    
     return publicKey;
 }
 

@@ -30,3 +30,13 @@ pod 'JitsiMeetSDK'
 
 end
 
+target 'SEBmacOS' do
+
+platform :ios, '11'
+pod 'CocoaLumberjack'
+pod 'InAppSettingsKit', '~> 2.15'#, :git => 'https://github.com/futuretap/InAppSettingsKit.git'
+pod 'QRCodeReaderViewController', '~> 4.0.2'
+pod 'JitsiMeetSDK'
+
+end
+

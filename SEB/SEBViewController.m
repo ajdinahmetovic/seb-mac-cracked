@@ -3910,11 +3910,11 @@ quittingClientConfig:(BOOL)quittingClientConfig
     } else {
         _userInterfaceOrientation = UIApplication.sharedApplication.statusBarOrientation;
     }
-
+    #if !TARGET_OS_MACCATALYST
     EAGLContext *eaglContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:eaglContext];
     _ciContext = [CIContext contextWithEAGLContext:eaglContext options:@{kCIContextWorkingColorSpace : [NSNull null]} ];
-
+    #endif
     _rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     
     [_rootViewController addChildViewController:self.jitsiViewController];
